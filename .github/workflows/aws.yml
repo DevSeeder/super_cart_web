@@ -25,12 +25,12 @@ jobs:
 
             sudo su
 
-            git checkout .
-            git checkout main
-            git pull
+            sudo git checkout .
+            sudo git checkout main
+            sudo git pull
 
-            npm install
-            npm run build
+            sudo npm install
+            sudo npm run build
 
             exit
 
