@@ -23,12 +23,16 @@ jobs:
 
             pm2 stop super_cart_web
 
+            sudo su
+
             git checkout .
             git checkout main
             git pull
 
             npm install
             npm run build
+
+            exit
 
             pm2 start super_cart_web
             pm2 save
