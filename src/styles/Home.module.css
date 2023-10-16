@@ -12,6 +12,10 @@
   flex: 'wrap';
 }
 
+.totalContainer{
+  margin-top: 18%;
+}
+
 .separatorContainer{
   width: 0.5%;
   background-color: black;
@@ -42,7 +46,6 @@
   
   .inputContainer {
     display: flex;
-    margin-bottom: 16px;
   }
   
   .input {
@@ -74,7 +77,6 @@
     justify-content: space-between;
     align-items: center;
     font-size: 18px;
-    margin-bottom: 8px;
   }
   
   .removeButton {

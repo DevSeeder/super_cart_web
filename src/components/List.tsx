@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from 'react';
-import { Input, Button, List as SemanticList, Icon, Grid, Label, Dropdown } from 'semantic-ui-react';
+import { Input, Button, List as SemanticList, Icon, Grid, Label, Dropdown, SemanticCOLORS, SemanticICONS } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import styles from '../styles/Home.module.css';
 
@@ -12,6 +12,10 @@ interface Item {
   quantity: number;
   measure: string;
 }
+
+const formatCurrency = (value: number) => {
+  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+};
 
 const measureOptions = [
   { key: 'unidade', text: 'Unidade', value: 'unidade' },
@@ -29,19 +33,19 @@ const measureOptions = [
 ];
 
 const categoryOptions = [
-  { key: 'geral', text: 'Geral', value: 'geral' },
-  { key: 'carne', text: 'Carnes', value: 'carne' },
-  { key: 'verdurasLegumes', text: 'Verduras e Legumes', value: 'verdurasLegumes' },
-  { key: 'lacticínios', text: 'Lacticínios', value: 'lacticínios' },
-  { key: 'frutas', text: 'Frutas', value: 'frutas' },
-  { key: 'bebidas', text: 'Bebidas', value: 'bebidas' },
-  { key: 'padaria', text: 'Padaria', value: 'padaria' },
-  { key: 'congelada', text: 'Comida Congelada', value: 'congelada' },
-  { key: 'mercearia', text: 'Mercearia', value: 'mercearia' },
-  { key: 'pet', text: 'Petshop', value: 'pet' },
-  { key: 'ferramentas', text: 'Ferramentas', value: 'ferramentas' },
-  { key: 'cozinha', text: 'Cozinha', value: 'cozinha' },
-  { key: 'eletro', text: 'Eletrodomésticos', value: 'eletro' },
+  { key: 'geral', text: 'Geral', value: 'geral', icon: 'archive', color: 'grey' },
+  { key: 'carne', text: 'Carnes', value: 'carne', icon: 'food', color: 'brown' },
+  { key: 'verdurasLegumes', text: 'Verduras e Legumes', value: 'verdurasLegumes', icon: 'leaf', color: 'green' },
+  { key: 'lacticínios', text: 'Lacticínios', value: 'lacticínios', icon: 'gulp', color: 'yellow' },
+  { key: 'frutas', text: 'Frutas', value: 'frutas', icon: 'lemon', color: 'orange' },
+  { key: 'bebidas', text: 'Bebidas', value: 'bebidas', icon: 'glass martini', color: 'teal' },
+  { key: 'padaria', text: 'Padaria', value: 'padaria', icon: 'coffee', color: 'olive' },
+  { key: 'congelada', text: 'Comida Congelada', value: 'congelada', icon: 'snowflake', color: 'blue' },
+  { key: 'mercearia', text: 'Mercearia', value: 'mercearia', icon: 'shopping cart', color: 'violet' },
+  { key: 'pet', text: 'Petshop', value: 'pet', icon: 'paw', color: 'purple' },
+  { key: 'ferramentas', text: 'Ferramentas', value: 'ferramentas', icon: 'wrench', color: 'pink' },
+  { key: 'cozinha', text: 'Cozinha', value: 'cozinha', icon: 'spoon', color: 'red' },
+  { key: 'eletro', text: 'Eletrodomésticos', value: 'eletro', icon: 'plug', color: 'black' },
 ];
 
 const List: React.FC = () => {
@@ -52,15 +56,6 @@ const List: React.FC = () => {
   const [inputValueValue, setInputValueValue] = useState<number>();
   const [inputQuantity, setInputQuantity] = useState<number>(1);
   const [inputMeasure, setInputMeasure] = useState<string>('unidade');
-  const [editedValues, setEditedValues] = useState<Item>({
-    text: '',
-    edited: false,
-    category: '',
-    value: 0,
-    quantity: 1,
-    measure: 'unidade',
-    risked: false
-  }); 
 
     // Função para validar se a entrada é um número
     const isValidNumber = (value: string) => /^\d+$/.test(value);
@@ -153,6 +148,21 @@ const List: React.FC = () => {
     if (e.key === 'Enter') {
       handleAddItem();
     }
+  };
+
+  const getTotalMarked = () => {
+    return items.reduce((total, item) => {
+      if (item.risked) {
+        return total + (item.value || 0) * item.quantity;
+      }
+      return total;
+    }, 0);
+  };
+
+  const getTotalAll = () => {
+    return items.reduce((total, item) => {
+      return total + (item.value || 0) * item.quantity;
+    }, 0);
   };
 
   return (
@@ -253,6 +263,24 @@ const List: React.FC = () => {
             </>
           )}
           </div>
+          <div className={styles.totalContainer}>
+            <div>
+              <div style={{ fontSize: 18, textDecoration: 'underline'}}>
+                <b>Total Geral: </b> 
+                <span style={{color: 'red'}}>{formatCurrency(getTotalAll())}</span>
+              </div>
+              <br/>
+              <div style={{ fontSize: 18}}>
+                <b>Total Marcado: </b> 
+                <span style={{color: 'red'}}>{formatCurrency(getTotalMarked())}</span>
+              </div>
+              <br/>
+              <div style={{ fontSize: 18}}>
+                <b>Total Restante: </b> 
+                <span style={{color: 'red'}}>{formatCurrency(getTotalAll() - getTotalMarked())}</span>
+              </div>
+            </div>
+          </div>
         </div>
         <div className={styles.separatorContainer}></div>
       </div>
@@ -267,45 +295,53 @@ const List: React.FC = () => {
             >
               <SemanticList.Content>
                 <div>
+                  <Label 
+                    style={{ float: 'right', marginBottom: '15px'}}
+                    color={categoryOptions.filter(cat => cat.value === item.category)[0].color as SemanticCOLORS}
+                  > 
+                    <Icon name={categoryOptions.filter(cat => cat.value === item.category)[0].icon as SemanticICONS } />
+                    {categoryOptions.filter(cat => cat.value === item.category)[0].text}
+                  </Label>
                   <h3>{item.text}</h3>
-                  <Label> Categoria: {item.category}</Label>
-                  <Label> Valor: {item.value}</Label>
-                  <Label> Quantidade: {item.quantity}</Label>
-                  <Label> Medida: {item.measure}</Label>
                 </div>
               </SemanticList.Content>
-              <SemanticList.Content floated="right" style={{ marginTop: '2%'}}>
+              <SemanticList.Content>
+                <div style={{ marginTop: '4%'}}>
+                <div style={{ float: 'left'}}>
+               {item.value ? (<Label>{formatCurrency(Number(item.value))}</Label>): ''}
+                <Label> {item.quantity} {measureOptions.filter(m => m.value === item.measure)[0].text}</Label>
+               </div>
+                <div style={{ float: 'right'}}>
                 <Button
                   icon
+                  size='tiny'
                   color="orange"
-                  labelPosition="left"
                   className={styles.editButton}
                   onClick={() => handleEditItem(index)}
                   disabled={editIndex !== null}
                 >
                   <Icon name="edit" />
-                  Editar
                 </Button>
                 <Button
                   icon
+                  size='tiny'
                   color="blue"
-                  labelPosition="left"
                   className={styles.completeButton}
                   onClick={() => handleToggleCompleted(index)}
                 >
                   <Icon name={!item.risked ? 'check' : 'remove'} />
-                  {!item.risked ? 'Marcar' : 'Desmarcar'}
                 </Button>
                 <Button
                   icon
+                  size='tiny'
                   color="red"
-                  labelPosition="left"
                   className={styles.removeButton}
                   onClick={() => handleRemoveItem(index)}
                 >
                   <Icon name="trash" />
-                  Remover
                 </Button>
+                </div>
+                </div>
               </SemanticList.Content>
             </SemanticList.Item>
           ))}
