@@ -18,14 +18,14 @@ const formatCurrency = (value: number) => {
 };
 
 const measureOptions = [
-  { key: 'unidade', text: 'Unidade', value: 'unidade' },
+  { key: 'unidade', text: 'Unidade(s)', value: 'unidade' },
   { key: 'kg', text: 'Kg', value: 'kg' },
   { key: 'g', text: 'g', value: 'g' },
   { key: 'pc', text: 'Pc', value: 'pc' },
   { key: 'caixa', text: 'Cx', value: 'caixa' },
-  { key: 'pacote', text: 'Pacote', value: 'pacote' },
-  { key: 'litro', text: 'Litro', value: 'litro' },
-  { key: 'garrafa', text: 'Garrafa', value: 'garrafa' },
+  { key: 'pacote', text: 'Pacote(s)', value: 'pacote' },
+  { key: 'litro', text: 'Litro(s)', value: 'litro' },
+  { key: 'garrafa', text: 'Garrafa(s)', value: 'garrafa' },
   { key: 'metro', text: 'm', value: 'metro' },
   { key: 'cm', text: 'cm', value: 'cm' },
   { key: 'ml', text: 'ml', value: 'ml' },
@@ -296,7 +296,7 @@ const List: React.FC = () => {
               <SemanticList.Content>
                 <div>
                   <Label 
-                    style={{ float: 'right', marginBottom: '15px'}}
+                    style={{ float: 'right'}}
                     color={categoryOptions.filter(cat => cat.value === item.category)[0].color as SemanticCOLORS}
                   > 
                     <Icon name={categoryOptions.filter(cat => cat.value === item.category)[0].icon as SemanticICONS } />
@@ -306,10 +306,23 @@ const List: React.FC = () => {
                 </div>
               </SemanticList.Content>
               <SemanticList.Content>
-                <div style={{ marginTop: '4%'}}>
+                <div style={{ marginTop: '2%'}}>
                 <div style={{ float: 'left'}}>
-               {item.value ? (<Label>{formatCurrency(Number(item.value))}</Label>): ''}
-                <Label> {item.quantity} {measureOptions.filter(m => m.value === item.measure)[0].text}</Label>
+               {item.value ? 
+                (
+                  <Label color='blue'>
+                    {formatCurrency(Number(item.value) * Number(item.quantity))}
+                  </Label>
+                ): ''}
+                <Label color='green'> 
+                  {item.quantity} {measureOptions.filter(m => m.value === item.measure)[0].text}
+                </Label>
+                {item.value && item.quantity > 1 ? 
+                (
+                  <Label>
+                    {item.quantity + ' x ' + formatCurrency(Number(item.value))}
+                  </Label>
+                ): ''}
                </div>
                 <div style={{ float: 'right'}}>
                 <Button
