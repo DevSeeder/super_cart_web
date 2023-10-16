@@ -1,8 +1,29 @@
 /* styles/Home.module.css */
+.inputContainer {
+  display: flex;
+  height: 100%;
+  width: 40.5%;
+  float: left;
+}
+
+.listContainer {
+  width: 59%;
+  float: right;
+  flex: 'wrap';
+}
+
+.separatorContainer{
+  width: 0.5%;
+  background-color: black;
+  min-height: 100%;
+  margin-left: 2%;
+  margin-right: 2%;
+}
 
 .container {
-    max-width: 600px;
-    margin-top: 50px !important;
+    max-width: 100%;
+    height: 100%;
+    /* margin-top: 10px !important; */
     margin: 0 auto;
     padding: 20px;
     background-color: #f9f9f9;
