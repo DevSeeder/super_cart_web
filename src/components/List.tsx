@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from 'react';
-import { Input, Button, List as SemanticList, Icon, Grid, Label, Dropdown, SemanticCOLORS, SemanticICONS } from 'semantic-ui-react';
+import { Input, Button, List as SemanticList, Icon, Grid, Label, Dropdown, SemanticCOLORS, SemanticICONS, Message } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import styles from '../styles/Home.module.css';
 
@@ -56,6 +56,8 @@ const List: React.FC = () => {
   const [inputValueValue, setInputValueValue] = useState<number>();
   const [inputQuantity, setInputQuantity] = useState<number>(1);
   const [inputMeasure, setInputMeasure] = useState<string>('unidade');
+  const [showValidationMessage, setShowValidationMessage] = useState<boolean>(false);
+  const [messageError, setMessageError] = useState<string>('');
 
     // Função para validar se a entrada é um número
     const isValidNumber = (value: string) => /^\d+$/.test(value);
@@ -73,7 +75,21 @@ const List: React.FC = () => {
     };
 
   const handleAddItem = () => {
-    if (inputValue.trim() !== '') {
+
+    if(inputValue.trim() === ''){
+      setShowValidationMessage(true);
+      setMessageError('Por favor preencha a descrição do item.');
+      return;
+    }
+
+    if(!Number(inputQuantity) || isNaN(Number(inputQuantity))){
+      setShowValidationMessage(true);
+      setMessageError('Informe a quantidade.');
+      return;
+    }
+
+    setShowValidationMessage(false);
+
       const newItem: Item = {
         risked: false,
         text: inputValue.trim(),
@@ -89,7 +105,6 @@ const List: React.FC = () => {
       setInputValueValue(0);
       setInputQuantity(1);
       setInputMeasure('unidade');
-    }
   };
 
   const handleEditItem = (index: number) => {
@@ -174,6 +189,7 @@ const List: React.FC = () => {
             <Input
               style={{ width: '100%' }}
               type="text"
+              placeholder="Descrição"
               value={inputValue}
               onChange={handleInputChange}
               onKeyDown={handleKeyPress}
@@ -241,6 +257,14 @@ const List: React.FC = () => {
                 </Button>
               )}
             </div>
+            {showValidationMessage && (
+                <div style={{marginTop: '12%', background: 'red', color: 'red'}}>
+                  <Message negative>
+                    <Message.Header>Erro de validação</Message.Header>
+                    <p>{messageError}</p>
+                  </Message>
+                </div>
+              )}
           {editIndex !== null && (
             <>
               <Button
