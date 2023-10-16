@@ -1,7 +1,7 @@
 /* styles/Home.module.css */
 .inputContainer {
   display: flex;
-  height: 100%;
+  height: 95%;
   width: 40.5%;
   float: left;
 }
@@ -15,7 +15,7 @@
 .separatorContainer{
   width: 0.5%;
   background-color: black;
-  min-height: 100%;
+  height: 95%;
   margin-left: 2%;
   margin-right: 2%;
 }
