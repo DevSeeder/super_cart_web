@@ -103,6 +103,11 @@
     font-size: 14px;
   }
   
+  .exportButton{
+    float: right;
+    margin-top: 5%;
+  }
+
   .editButton {
     background-color: #007bff;
   }

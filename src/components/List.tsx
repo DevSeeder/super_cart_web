@@ -1,7 +1,8 @@
 import React, { useState, ChangeEvent } from 'react';
-import { Input, Button, List as SemanticList, Icon, Grid, Label, Dropdown, SemanticCOLORS, SemanticICONS, Message } from 'semantic-ui-react';
+import { Input, Button, List as SemanticList, Icon, Grid, Label, Dropdown, SemanticCOLORS, SemanticICONS, Message, Modal } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import styles from '../styles/Home.module.css';
+import Papa from 'papaparse';
 
 interface Item {
   text: string;
@@ -57,6 +58,7 @@ const List: React.FC = () => {
   const [inputQuantity, setInputQuantity] = useState<number>(1);
   const [inputMeasure, setInputMeasure] = useState<string>('unidade');
   const [showValidationMessage, setShowValidationMessage] = useState<boolean>(false);
+  const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<string>('');
 
     // Função para validar se a entrada é um número
@@ -178,6 +180,46 @@ const List: React.FC = () => {
     return items.reduce((total, item) => {
       return total + (item.value || 0) * item.quantity;
     }, 0);
+  };
+
+  const handleExportText = () => {
+    if (!items.length) return;
+
+    const content = items.map((item, index) => 
+      `${index + 1}. ${item.text} (${item.quantity}x) - ${item.value ? formatCurrency(Number(item.value) * item.quantity) : ''}`
+    ).join('\n');
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lista_de_compras.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    setShowExportModal(false); // Feche o modal após a exportação
+  };
+
+  // Função para exportar como CSV
+  const handleExportCSV = () => {
+    if (!items.length) return;
+
+    const csvContent = Papa.unparse({
+      fields: ['Descrição', 'Categoria', 'Valor', 'Quantidade', 'Medida'],
+      data: items.map(item => [item.text, item.category, item.value || '', item.quantity, item.measure]),
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lista_de_compras.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    setShowExportModal(false); 
   };
 
   return (
@@ -305,6 +347,42 @@ const List: React.FC = () => {
               </div>
             </div>
           </div>
+          <div style={{marginTop: '5%'}}>
+            <Button
+              icon
+              color="blue"
+              labelPosition="left"
+              disabled={items.length === 0}
+              className={styles.exportButton}
+              onClick={() => setShowExportModal(true)}
+            >
+              <Icon name="download" />
+              Exportar Lista
+            </Button>
+          </div>
+          <Modal open={showExportModal}>
+            <Modal.Header>Exportar Lista</Modal.Header>
+            <Modal.Content>
+              <p>Escolha o formato de exportação:</p>
+              <Button
+                color='green'
+                onClick={handleExportText}
+              >
+                <Icon name='file text' /> Exportar como Texto
+              </Button>
+              <Button
+                color='blue'
+                onClick={handleExportCSV}
+              >
+                <Icon name='file excel outline' /> Exportar como CSV
+              </Button>
+            </Modal.Content>
+            <Modal.Actions>
+              <Button color='red' onClick={() => {setShowExportModal(false)}}>
+                <Icon name='remove' /> Cancelar
+              </Button>
+            </Modal.Actions>
+        </Modal>
         </div>
         <div className={styles.separatorContainer}></div>
       </div>
