@@ -7,6 +7,10 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'SuperCart | Carrinho de Compras',
   description: '',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1
+  }
 }
 
 export default function RootLayout({
@@ -16,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className} suppressHydrationWarning={true}>{children}</body>
     </html>
   )
 }

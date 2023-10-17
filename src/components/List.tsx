@@ -196,7 +196,7 @@ const List: React.FC = () => {
     a.download = 'lista_de_compras.txt';
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    if(document.body) document.body.removeChild(a);
 
     setShowExportModal(false); // Feche o modal após a exportação
   };
@@ -217,7 +217,7 @@ const List: React.FC = () => {
     a.download = 'lista_de_compras.csv';
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    if(document.body) document.body.removeChild(a);
 
     setShowExportModal(false); 
   };
@@ -230,6 +230,7 @@ const List: React.FC = () => {
           <div style={{ width: '100%', marginBottom: '2%'}}>
             <Input
               style={{ width: '100%' }}
+              className={styles.inputValue}
               type="text"
               placeholder="Descrição"
               value={inputValue}
@@ -384,7 +385,6 @@ const List: React.FC = () => {
             </Modal.Actions>
         </Modal>
         </div>
-        <div className={styles.separatorContainer}></div>
       </div>
       <div className={styles.listContainer}>
         <SemanticList divided relaxed selection className={styles.list}>
