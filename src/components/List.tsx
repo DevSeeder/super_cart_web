@@ -387,7 +387,7 @@ const List: React.FC = () => {
         <div className={styles.separatorContainer}></div>
       </div>
       <div className={styles.listContainer}>
-        <SemanticList divided relaxed className={styles.list}>
+        <SemanticList divided relaxed selection className={styles.list}>
           {items.map((item, index) => (
             <SemanticList.Item
               key={index}
